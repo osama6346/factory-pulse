@@ -2,16 +2,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const connectDB = require('./db');
 const SensorData = require('./models');
-
+const cors = require('cors');
+require('dotenv').config();
 const app = express();
-
-// Connect to MongoDB
 connectDB();
 
-// Middleware
 app.use(bodyParser.json());
-
-// Endpoint to handle incoming data (POST)
+app.use(cors());
 app.post('/data', async (req, res) => {
   const { temperature, humidity, pressure, deviceId } = req.body;
 
