@@ -59,7 +59,7 @@ app.post('/data/:siteId/:nodeId/:versionNumber', async (req, res) => {
           nodeId,
           sensors: sensorDataArray.map(sensorData => ({
             sensorId: sensorData.sensorId,
-            data: sensorData  
+            data: [sensorData]  
           }))
         }]
       });
@@ -71,15 +71,21 @@ app.post('/data/:siteId/:nodeId/:versionNumber', async (req, res) => {
           nodeId,
           sensors: sensorDataArray.map(sensorData => ({
             sensorId: sensorData.sensorId,
-            data: sensorData  
+            data: [sensorData]  
           }))
         });
       } else {
         sensorDataArray.forEach(sensorData => {
-          node.sensors.push({
-            sensorId: sensorData.sensorId,
-            data: sensorData  
-          });
+          let existingSensor = node.sensors.find(s => s.sensorId === sensorData.sensorId);
+
+          if (existingSensor) {
+            existingSensor.data.push(sensorData);
+          } else {
+            node.sensors.push({
+              sensorId: sensorData.sensorId,
+              data: [sensorData]  
+            });
+          }
         });
       }
     }
@@ -102,6 +108,8 @@ app.post('/data/:siteId/:nodeId/:versionNumber', async (req, res) => {
     res.status(500).send('Server error');
   }
 });
+
+
 
 
 
