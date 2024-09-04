@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
+// Schema for SensorData
 const SensorDataSchema = new mongoose.Schema({
-  deviceName: String,
-  time: String,
+  sensorId: String,
   xAxisVibrationSpeed: Number,
   yAxisVibrationSpeed: Number,
   zAxisVibrationSpeed: Number,
@@ -23,6 +23,21 @@ const SensorDataSchema = new mongoose.Schema({
   }
 });
 
-const SensorData = mongoose.model('SensorData', SensorDataSchema);
+// Schema for Node
+const NodeSchema = new mongoose.Schema({
+  nodeId: String,
+  sensors: [SensorDataSchema]
+});
 
-module.exports = SensorData;
+// Schema for Site
+const SiteSchema = new mongoose.Schema({
+  siteId: String,
+  nodes: [NodeSchema]
+});
+
+
+
+
+const Site = mongoose.model('Site', SiteSchema);
+
+module.exports =  Site;
