@@ -47,7 +47,7 @@ app.post('/settings', async (req, res) => {
 
 app.post('/data/:siteId/:nodeId/:versionNumber', async (req, res) => {
   const { siteId, nodeId, versionNumber } = req.params;
-  const sensorDataArray = req.body; 
+  const sensorDataArray = req.body;  
 
   try {
     let site = await Site.findOne({ siteId });
@@ -57,7 +57,10 @@ app.post('/data/:siteId/:nodeId/:versionNumber', async (req, res) => {
         siteId,
         nodes: [{
           nodeId,
-          sensors: sensorDataArray  
+          sensors: sensorDataArray.map(sensorData => ({
+            sensorId: sensorData.sensorId,
+            data: sensorData  
+          }))
         }]
       });
     } else {
@@ -66,11 +69,17 @@ app.post('/data/:siteId/:nodeId/:versionNumber', async (req, res) => {
       if (!node) {
         site.nodes.push({
           nodeId,
-          sensors: sensorDataArray  
+          sensors: sensorDataArray.map(sensorData => ({
+            sensorId: sensorData.sensorId,
+            data: sensorData  
+          }))
         });
       } else {
         sensorDataArray.forEach(sensorData => {
-          node.sensors.push(sensorData);
+          node.sensors.push({
+            sensorId: sensorData.sensorId,
+            data: sensorData  
+          });
         });
       }
     }
@@ -93,6 +102,7 @@ app.post('/data/:siteId/:nodeId/:versionNumber', async (req, res) => {
     res.status(500).send('Server error');
   }
 });
+
 
 
 // GET data from /:siteId/:nodeId to retrieve all sensor data

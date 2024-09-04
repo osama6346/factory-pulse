@@ -1,22 +1,9 @@
 const mongoose = require('mongoose');
 
-// Schema for SensorData
+// Schema for SensorData using Mixed type for dynamic fields
 const SensorDataSchema = new mongoose.Schema({
   sensorId: String,
-  xAxisVibrationSpeed: Number,
-  yAxisVibrationSpeed: Number,
-  zAxisVibrationSpeed: Number,
-  chipTime: Date,
-  xAxisAngularVibrationAmplitude: Number,
-  yAxisAngularVibrationAmplitude: Number,
-  zAxisAngularVibrationAmplitude: Number,
-  temperature: Number,
-  xAxisVibrationDisplacement: Number,
-  yAxisVibrationDisplacement: Number,
-  zAxisVibrationDisplacement: Number,
-  xAxisFrequencyVibrationFrequency: Number,
-  yAxisFrequencyVibrationFrequency: Number,
-  zAxisFrequencyVibrationFrequency: Number,
+  data: mongoose.Schema.Types.Mixed,  // Use Mixed type to allow any structure for sensor data
   timestamp: {
     type: Date,
     default: Date.now
@@ -35,9 +22,6 @@ const SiteSchema = new mongoose.Schema({
   nodes: [NodeSchema]
 });
 
-
-
-
 const Site = mongoose.model('Site', SiteSchema);
 
-module.exports =  Site;
+module.exports = Site;
