@@ -47,27 +47,38 @@ app.post('/settings', async (req, res) => {
 
 app.post('/data/:siteId/:nodeId/:versionNumber', async (req, res) => {
   const { siteId, nodeId, versionNumber } = req.params;
-  const sensorData = req.body;
+  const sensorDataArray = req.body; 
 
   try {
     let site = await Site.findOne({ siteId });
 
     if (!site) {
-      site = new Site({ siteId, nodes: [{ nodeId, sensors: [sensorData] }] });
+      site = new Site({
+        siteId,
+        nodes: [{
+          nodeId,
+          sensors: sensorDataArray  
+        }]
+      });
     } else {
       let node = site.nodes.find(n => n.nodeId === nodeId);
 
       if (!node) {
-        site.nodes.push({ nodeId, sensors: [sensorData] });
+        site.nodes.push({
+          nodeId,
+          sensors: sensorDataArray  
+        });
       } else {
-        node.sensors.push(sensorData);
+        sensorDataArray.forEach(sensorData => {
+          node.sensors.push(sensorData);
+        });
       }
     }
 
     await site.save();
 
-    const currentSettings = await SensorSettings.findOne();  
-    
+    const currentSettings = await SensorSettings.findOne();
+
     if (currentSettings && currentSettings.versionNumber != versionNumber) {
       return res.status(201).json({
         message: 'Sensor data saved',
@@ -82,6 +93,7 @@ app.post('/data/:siteId/:nodeId/:versionNumber', async (req, res) => {
     res.status(500).send('Server error');
   }
 });
+
 
 // GET data from /:siteId/:nodeId to retrieve all sensor data
 app.get('/data/:siteId/:nodeId', async (req, res) => {
