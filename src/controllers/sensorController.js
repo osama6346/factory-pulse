@@ -38,16 +38,18 @@ exports.addSensorData = async (req, res) => {
       }
     }
 
-    const currentSettings = await SensorSettings.findOne();
+    if (versionNumber) {
+      const currentSettings = await SensorSettings.findOne();
 
-    if (currentSettings && currentSettings.versionNumber != versionNumber) {
-      return res.status(201).json({
-        message: 'Sensor data saved',
-        settings: currentSettings,
-      });
-    } else {
-      return res.status(201).send('Sensor data saved');
+      if (currentSettings && currentSettings.versionNumber != versionNumber) {
+        return res.status(201).json({
+          message: 'Sensor data saved',
+          settings: currentSettings,
+        });
+      }
     }
+
+    return res.status(201).send('Sensor data saved');
 
   } catch (err) {
     console.error(err.message);
